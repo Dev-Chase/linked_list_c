@@ -5,7 +5,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-// TODO: add prev ptr
 typedef struct Node {
     void *val;
     struct Node *next;
