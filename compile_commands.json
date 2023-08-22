@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/opt/homebrew/opt/llvm/bin/clang",
+      "-g",
+      "-Wall",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "obj/testing.o",
+      "src/testing.c"
+    ],
+    "directory": "/Users/chase/Coding/C/linked_list",
+    "file": "/Users/chase/Coding/C/linked_list/src/testing.c",
+    "output": "/Users/chase/Coding/C/linked_list/obj/testing.o"
+  }
+]
