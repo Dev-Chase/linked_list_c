@@ -72,48 +72,28 @@ void insert_node(LinkedList *list, size_t ind, void *val) {
 
     // If the Index is at the Beginning
     if (ind == 0) {
-        Node *old_head = list->head;
-        list->head = malloc(sizeof(Node));
-
-        if (list->head == NULL) {
-            perror("error");
-            exit(EXIT_FAILURE);
-        }
-
-        list->head->next = old_head;
-        list->head->val = val;
+        insert_node_at_head(list, val);
+        return;
     }
     // If the Index is at the Very End
-    else if (ind == list->len) {
-        list->tail->next = malloc(sizeof(Node));
-
-        if (list->tail->next == NULL) {
-            perror("error");
-            exit(EXIT_FAILURE);
-        }
-
-        // New Tail Becomes Actual Tail
-        list->tail = list->tail->next;
-
-        // Set Defaults for New Tail
-        list->tail->next = NULL;
-        list->tail->val = val;
+    if (ind == list->len) {
+        append_node(list, val);
+        return;
     }
+
     // Any Other Index
-    else {
-        Node *cur = list->head;
-        for (size_t i = 0; i < ind - 1; i++) {
-            cur = cur->next;
-        }
-        Node *old_next = cur->next;
-        cur->next = malloc(sizeof(Node));
-        if (cur->next == NULL) {
-            perror("error");
-            exit(EXIT_FAILURE);
-        }
-        cur->next->next = old_next;
-        cur->next->val = val;
+    Node *cur = list->head;
+    for (size_t i = 0; i < ind - 1; i++) {
+        cur = cur->next;
     }
+    Node *old_next = cur->next;
+    cur->next = malloc(sizeof(Node));
+    if (cur->next == NULL) {
+        perror("error");
+        exit(EXIT_FAILURE);
+    }
+    cur->next->next = old_next;
+    cur->next->val = val;
 
     list->len++;
 }
@@ -161,7 +141,7 @@ void insert_node_at_head(LinkedList *list, void *val) {
 Node *get_node(LinkedList *list, size_t ind) {
     // Index Bounds Checking
     if (ind >= list->len) {
-        fprintf(stderr, "error: index out of bounds\v NULL returned\n");
+        fprintf(stderr, "error: index out of bounds\t NULL returned\n");
         return NULL;
     }
 
@@ -178,14 +158,20 @@ Node *get_node(LinkedList *list, size_t ind) {
 }
 
 void *get_node_val(LinkedList *list, size_t ind) {
-    // Initializing Current Pointer
+    // Index Bounds Checking
+    if (ind >= list->len) {
+        fprintf(stderr, "error: index out of bounds\t NULL returned\n");
+        return NULL;
+    }
+
+    // Initialize Current Node Ptr
     Node *cur = list->head;
 
-    // Move Current Ptr Ind times
+    // Move Current Ptr Ind Times
     for (int i = 0; i < ind; i++) {
         cur = cur->next;
     }
 
-    // Return Current Value
+    // Return Current Val
     return cur->val;
 }

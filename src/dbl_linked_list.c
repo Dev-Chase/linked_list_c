@@ -75,98 +75,59 @@ void insert_dbl_node(DblLinkedList *list, size_t ind, void *val) {
 
     // If the Index is at the Beginning
     if (ind == 0) {
-        list->head->prev = malloc(sizeof(DblNode));
-
-        // Malloc Error Check
-        if (list->head->prev == NULL) {
-            perror("error");
-            exit(EXIT_FAILURE);
-        }
-
-        // Point New Head to Old Head
-        list->head->prev->next = list->head;
-
-        // New Head becomes actual Head
-        list->head = list->head->prev;
-
-        // Set Defaults for New Head
-        list->head->prev = NULL;
-        list->head->val = val;
+        insert_dbl_node_at_head(list, val);
+        return;
     }
     // If the Index is at the Very End
-    else if (ind == list->len) {
-        list->tail->next = malloc(sizeof(DblNode));
-
-        if (list->tail->next == NULL) {
-            perror("error");
-            exit(EXIT_FAILURE);
-        }
-
-        // Make New Tail's Prev Ptr point to Old Tail
-        list->tail->next->prev = list->tail;
-
-        // New Tail Becomes Actual Tail
-        list->tail = list->tail->next;
-
-        // Set Defaults for New Tail
-        list->tail->next = NULL;
-        list->tail->val = val;
-    }
-    // Any Other Index
-    else {
-        // TODO: implement prev
-
-        // Initialize Cur Ptr
-        DblNode *node_ptr = list->head;
-
-        // Set Cur Ptr to Requested Index
-        for (size_t i = 0; i < ind - 1; i++) {
-            node_ptr = node_ptr->next;
-        }
-
-        // fprintf(stderr, "Cur Ind: %zu\tCur Val: %d\n", ind,
-        // *(int *)node_ptr->val);
-
-        // Allocate Memory for New Node
-        node_ptr->next->prev = malloc(sizeof(DblNode));
-
-        // Malloc Error Checks
-        if (node_ptr->next->prev == NULL) {
-            perror("error");
-            exit(EXIT_SUCCESS);
-        }
-
-        // Insert New Node as Next Node
-        // node_ptr->next->prev->val = val;
-        node_ptr->next->prev->next = node_ptr->next;
-        node_ptr->next->prev->prev = node_ptr;
-        node_ptr->next = node_ptr->next->prev;
-        node_ptr->next->val = val;
-
-        // DblNode *new = malloc(sizeof(DblNode));
-        // new->next = node_ptr->next;
-        // new->prev = node_ptr;
-        //
-        // node_ptr->next->prev = new;
-        // node_ptr->next = new;
-        //
-        // new->val = val;
+    if (ind == list->len) {
+        append_dbl_node(list, val);
+        return;
     }
 
+    // Any Other Index:
+    // Initialize Cur Ptr
+    DblNode *node_ptr = list->head;
+
+    // Set Cur Ptr to Requested Index
+    for (size_t i = 0; i < ind - 1; i++) {
+        node_ptr = node_ptr->next;
+    }
+
+    // Allocate Memory for New Node
+    node_ptr->next->prev = malloc(sizeof(DblNode));
+
+    // Malloc Error Checks
+    if (node_ptr->next->prev == NULL) {
+        perror("error");
+        exit(EXIT_SUCCESS);
+    }
+
+    // Set New Node's Next Ptr
+    node_ptr->next->prev->next = node_ptr->next;
+
+    // Insert New Node as Previous Node's Next Ptr
+    node_ptr->next = node_ptr->next->prev;
+
+    // Set New Node's Previous Pointer
+    node_ptr->next->prev = node_ptr;
+
+    // Assign New Node's Value
+    node_ptr->next->val = val;
+
+    // Increment List Length
     list->len++;
 }
 
 void append_dbl_node(DblLinkedList *list, void *val) {
-    // TODO: implement prev
-
-    // Allocating Memory for New Node
     list->tail->next = malloc(sizeof(DblNode));
 
-    // Malloc Error Checks
     if (list->tail->next == NULL) {
         perror("error");
         exit(EXIT_FAILURE);
     }
+
+    // Make New Tail's Prev Ptr point to Old Tail
+    list->tail->next->prev = list->tail;
 
     // New Tail Becomes Actual Tail
     list->tail = list->tail->next;
@@ -180,20 +141,22 @@ void append_dbl_node(DblLinkedList *list, void *val) {
 }
 
 void insert_dbl_node_at_head(DblLinkedList *list, void *val) {
-    // TODO: implement prev
+    list->head->prev = malloc(sizeof(DblNode));
 
-    // Allocating Memory for New Node
-    DblNode *old_head = list->head;
-    list->head = malloc(sizeof(DblNode));
-
-    // Malloc Error Checks
-    if (list->head == NULL) {
+    // Malloc Error Check
+    if (list->head->prev == NULL) {
         perror("error");
         exit(EXIT_FAILURE);
     }
 
-    // Setting Default Values for New Head
-    list->head->next = old_head;
+    // Point New Head to Old Head
+    list->head->prev->next = list->head;
+
+    // New Head becomes actual Head
+    list->head = list->head->prev;
+
+    // Set Defaults for New Head
+    list->head->prev = NULL;
     list->head->val = val;
 
     // Increment List Len
@@ -201,20 +164,26 @@ void insert_dbl_node_at_head(DblLinkedList *list, void *val) {
 }
 
 DblNode *get_dbl_node(DblLinkedList *list, size_t ind) {
-    // TODO: implement prev
-
     // Index Bounds Checking
     if (ind >= list->len) {
-        fprintf(stderr, "error: index out of bounds\v NULL returned\n");
+        fprintf(stderr, "error: index out of bounds\t NULL returned\n");
         return NULL;
     }
 
     // Initialize Current Node Ptr
-    DblNode *cur = list->head;
+    DblNode *cur = ind > list->len / 2 ? list->tail : list->head;
 
-    // Move Current Ptr Ind Times
-    for (int i = 0; i < ind; i++) {
-        cur = cur->next;
+    // Move Current Ptr Ind Times According to Position in List:
+    if (ind > list->len / 2) {
+        // Loop Backwards
+        for (int i = 0; i < list->len - ind - 1; i++) {
+            cur = cur->prev;
+        }
+    } else {
+        // Loop Forwards
+        for (int i = 0; i < ind; i++) {
+            cur = cur->next;
+        }
     }
 
     // Return Current Ptr
@@ -222,16 +191,28 @@ DblNode *get_dbl_node(DblLinkedList *list, size_t ind) {
 }
 
 void *get_dbl_node_val(DblLinkedList *list, size_t ind) {
-    // TODO: implement prev
-
-    // Initializing Current Pointer
-    DblNode *cur = list->head;
-
-    // Move Current Ptr Ind times
-    for (int i = 0; i < ind; i++) {
-        cur = cur->next;
+    // Index Bounds Checking
+    if (ind >= list->len) {
+        fprintf(stderr, "error: index out of bounds\t NULL returned\n");
+        return NULL;
     }
 
-    // Return Current Value
+    // Initialize Current Node Ptr
+    DblNode *cur = ind > list->len / 2 ? list->tail : list->head;
+
+    // Move Current Ptr Ind Times According to Position in List:
+    if (ind > list->len / 2) {
+        // Loop Backwards
+        for (int i = 0; i < list->len - ind - 1; i++) {
+            cur = cur->prev;
+        }
+    } else {
+        // Loop Forwards
+        for (int i = 0; i < ind; i++) {
+            cur = cur->next;
+        }
+    }
+
+    // Return Current Val
     return cur->val;
 }

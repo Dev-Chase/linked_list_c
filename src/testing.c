@@ -26,8 +26,8 @@ int main(void) {
     print_dbl_linked_list(&ll);
     // append_dbl_node(&ll, &x);
 
-    // Print Linked List Elements
-    // print_dbl_linked_list(&ll);
+    // Print Linked List Element at Index 3
+    // printf("Val at I3: %d\n", *(int *)get_dbl_node(&ll, ll.len - 1)->val);
 
     // Free Linked List
     delete_dbl_linked_list(&ll);
