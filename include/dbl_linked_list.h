@@ -9,24 +9,25 @@ extern "C" {
 typedef struct Node {
     void *val;
     struct Node *next;
-} Node;
+    struct Node *prev;
+} DblNode;
 
-typedef struct LinkedList {
-    Node *head;
-    Node *tail;
+typedef struct DblLinkedList {
+    DblNode *head;
+    DblNode *tail;
     size_t len;
-    size_t node_size;
-} LinkedList;
+    size_t node_val_size;
+} DblLinkedList;
 
-LinkedList new_linked_list(void);
-void init_linked_list(LinkedList *list, void *val, size_t size);
-void delete_linked_list(LinkedList *list);
-void print_linked_list(LinkedList *list);
-void insert_node(LinkedList *list, size_t ind, void *val);
-void append_node(LinkedList *list, void *val);
-void insert_node_at_head(LinkedList *list, void *val);
-Node *get_node(LinkedList *list, size_t ind);
-void *get_node_val(LinkedList *list, size_t ind);
+DblLinkedList new_dbl_linked_list(void);
+void init_dbl_linked_list(DblLinkedList *list, void *val, size_t size);
+void delete_dbl_linked_list(DblLinkedList *list);
+void print_dbl_linked_list(DblLinkedList *list);
+void insert_dbl_node(DblLinkedList *list, size_t ind, void *val);
+void append_dbl_node(DblLinkedList *list, void *val);
+void insert_dbl_node_at_head(DblLinkedList *list, void *val);
+DblNode *get_dbl_node(DblLinkedList *list, size_t ind);
+void *get_dbl_node_val(DblLinkedList *list, size_t ind);
 
 #ifdef __cplusplus
 }

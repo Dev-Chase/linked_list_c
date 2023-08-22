@@ -7,7 +7,8 @@ OBJ=obj
 BIN=bin
 EXE=testing
 MAIN=testing
-OBJS=$(OBJ)/$(MAIN).o $(OBJ)/linkedlist.o
+OBJS=$(OBJ)/$(MAIN).o $(OBJ)/dbl_linked_list.o 
+# OBJS =$(OBJ)/$(MAIN).o $(OBJ)/linked_list.o
 
 all: $(BIN)/$(EXE)
 

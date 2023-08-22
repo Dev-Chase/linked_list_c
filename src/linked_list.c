@@ -8,7 +8,7 @@ LinkedList new_linked_list(void) {
         .len = 0,
         .head = NULL,
         .tail = NULL,
-        .node_size = 0,
+        .node_val_size = 0,
     };
 }
 
@@ -30,7 +30,7 @@ void init_linked_list(LinkedList *list, void *val, size_t size) {
     list->tail = list->head;
 
     // Initialize Node Length and Size
-    list->node_size = size;
+    list->node_val_size = size;
     list->len = 1;
 }
 
@@ -45,15 +45,14 @@ void delete_linked_list(LinkedList *list) {
     }
 
     list->head = NULL;
+    list->tail = NULL;
     list->len = 0;
-    list->node_size = 0;
+    list->node_val_size = 0;
 }
 
 void print_linked_list(LinkedList *list) {
     Node *cur = list->head;
-    // for (int i = 0; i < list->len) {
-    //
-    // }
+
     int i = 0;
     while (cur != NULL) {
         printf("[#%d=%d] -> ", i, *(int *)cur->val);
@@ -65,8 +64,8 @@ void print_linked_list(LinkedList *list) {
 
 void insert_node(LinkedList *list, size_t ind, void *val) {
     // Index Bounds Check
-    if (ind > list->len) {
-        fprintf(stderr, "can't insert in index %zu as it is out of bounds",
+    if (ind > list->len + 1) {
+        fprintf(stderr, "can't insert in index %zu as it is out of bounds\n",
                 ind);
         return;
     }
@@ -86,7 +85,6 @@ void insert_node(LinkedList *list, size_t ind, void *val) {
     }
     // If the Index is at the Very End
     else if (ind == list->len) {
-        // TODO: Insert node at end using tail
         list->tail->next = malloc(sizeof(Node));
 
         if (list->tail->next == NULL) {
@@ -136,6 +134,9 @@ void append_node(LinkedList *list, void *val) {
     // Set Defaults for New Tail
     list->tail->next = NULL;
     list->tail->val = val;
+
+    // Increment List Len
+    list->len++;
 }
 
 void insert_node_at_head(LinkedList *list, void *val) {
@@ -152,12 +153,15 @@ void insert_node_at_head(LinkedList *list, void *val) {
     // Setting Default Values for New Head
     list->head->next = old_head;
     list->head->val = val;
+
+    // Increment List Len
+    list->len++;
 }
 
 Node *get_node(LinkedList *list, size_t ind) {
     // Index Bounds Checking
     if (ind >= list->len) {
-        fprintf(stderr, "error: index out of bounds\v NULL returned");
+        fprintf(stderr, "error: index out of bounds\v NULL returned\n");
         return NULL;
     }
 

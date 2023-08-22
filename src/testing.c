@@ -1,4 +1,5 @@
-#include "linked_list.h"
+// #include "linked_list.h"
+#include "dbl_linked_list.h"
 #include <stdint.h>
 #include <stdio.h>
 
@@ -8,20 +9,28 @@ int main(void) {
     int z = 100;
 
     // Initialize LinkedList
-    LinkedList ll = new_linked_list();
-    init_linked_list(&ll, &x, sizeof(int));
+    DblLinkedList ll = new_dbl_linked_list();
+    init_dbl_linked_list(&ll, &x, sizeof(int));
+    // ll.node_val_size = sizeof(int);
+    // ll.len = 0;
 
     // Insert Nodes
-    insert_node(&ll, 1, &y);
-    insert_node(&ll, 1, &z);
-    insert_node(&ll, 1, &z);
-    insert_node(&ll, 1, &y);
+    print_dbl_linked_list(&ll);
+    insert_dbl_node(&ll, 1, &x);
+    insert_dbl_node(&ll, 1, &y);
+    insert_dbl_node(&ll, 1, &y);
+    insert_dbl_node(&ll, ll.len / 2, &z);
+    // insert_dbl_node_at_head(&ll, &x);
 
     // Print Linked List Elements
-    print_linked_list(&ll);
+    print_dbl_linked_list(&ll);
+    // append_dbl_node(&ll, &x);
+
+    // Print Linked List Elements
+    // print_dbl_linked_list(&ll);
 
     // Free Linked List
-    delete_linked_list(&ll);
+    delete_dbl_linked_list(&ll);
 
     return 0;
 }
