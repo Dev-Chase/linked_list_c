@@ -24,6 +24,9 @@ int main(void) {
 
     // Print Linked List Elements
     print_dbl_linked_list(&ll);
+    del_dbl_node_i(&ll, ll.len - 1);
+    print_dbl_linked_list(&ll);
+    printf("List Len: %2lu\n", ll.len);
     // append_dbl_node(&ll, &x);
 
     // Print Linked List Element at Index 3

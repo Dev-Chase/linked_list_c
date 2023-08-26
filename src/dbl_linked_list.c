@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: implement prev
 DblLinkedList new_dbl_linked_list(void) {
     return (DblLinkedList){
         .len = 0,
@@ -118,6 +117,46 @@ void insert_dbl_node(DblLinkedList *list, size_t ind, void *val) {
     list->len++;
 }
 
+void insert_dbl_node_at_head(DblLinkedList *list, void *val) {
+    if (list->len == 0) {
+        list->head = malloc(sizeof(DblNode));
+        if (list->head == NULL) {
+            perror("error");
+            exit(EXIT_FAILURE);
+        }
+        list->head->next = NULL;
+        list->head->prev = NULL;
+        list->head->val = val;
+        list->tail = list->head;
+        // NOTE: does not assign list.node_val_size
+
+        // Increment List
+        list->len++;
+
+        return;
+    }
+    list->head->prev = malloc(sizeof(DblNode));
+
+    // Malloc Error Check
+    if (list->head->prev == NULL) {
+        perror("error");
+        exit(EXIT_FAILURE);
+    }
+
+    // Point New Head to Old Head
+    list->head->prev->next = list->head;
+
+    // New Head becomes actual Head
+    list->head = list->head->prev;
+
+    // Set Defaults for New Head
+    list->head->prev = NULL;
+    list->head->val = val;
+
+    // Increment List Len
+    list->len++;
+}
+
 void append_dbl_node(DblLinkedList *list, void *val) {
     list->tail->next = malloc(sizeof(DblNode));
 
@@ -140,27 +179,43 @@ void append_dbl_node(DblLinkedList *list, void *val) {
     list->len++;
 }
 
-void insert_dbl_node_at_head(DblLinkedList *list, void *val) {
-    list->head->prev = malloc(sizeof(DblNode));
-
-    // Malloc Error Check
-    if (list->head->prev == NULL) {
-        perror("error");
-        exit(EXIT_FAILURE);
+void del_dbl_node_i(DblLinkedList *list, uint_fast32_t ind) {
+    if (ind >= list->len) {
+        fprintf(stderr, "error: index out of bounds\t failed to delete node %d",
+                ind);
+        return;
     }
 
-    // Point New Head to Old Head
-    list->head->prev->next = list->head;
+    // NOTE: doesn't free node->val
+    DblNode *node = list->head;
+    for (int i = 0; i < ind; i++) {
+        node = node->next;
+    }
+    if (node->prev == NULL && node->next != NULL) {
+        node->next->prev = NULL;
+        list->head = node->next;
+    } else if (node->next == NULL && node->prev != NULL) {
+        node->prev->next = NULL;
+        list->tail = node->prev;
+    } else if (node->prev != NULL && node->next != NULL) {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+    } else {
+        list->head = NULL;
+        list->tail = NULL;
+    }
 
-    // New Head becomes actual Head
-    list->head = list->head->prev;
+    // if (node->prev != NULL) {
+    //     node->prev->next = node->next;
+    // }
+    // if (node->next != NULL) {
+    //     node->next->prev = node->prev;
+    // }
+    // node->prev->next = node->next;
+    // node->next->prev = node->prev;
 
-    // Set Defaults for New Head
-    list->head->prev = NULL;
-    list->head->val = val;
-
-    // Increment List Len
-    list->len++;
+    free(node);
+    list->len--;
 }
 
 DblNode *get_dbl_node(DblLinkedList *list, size_t ind) {

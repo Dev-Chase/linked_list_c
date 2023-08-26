@@ -98,6 +98,41 @@ void insert_node(LinkedList *list, size_t ind, void *val) {
     list->len++;
 }
 
+void insert_node_at_head(LinkedList *list, void *val) {
+    if (list->len == 0) {
+        list->head = malloc(sizeof(Node));
+        if (list->head == NULL) {
+            perror("error");
+            exit(EXIT_FAILURE);
+        }
+        list->head->next = NULL;
+        list->head->val = val;
+        list->tail = list->head;
+        // NOTE: does not assign list.node_val_size
+
+        // Increment List
+        list->len++;
+
+        return;
+    }
+    // Allocating Memory for New Node
+    Node *old_head = list->head;
+    list->head = malloc(sizeof(Node));
+
+    // Malloc Error Checks
+    if (list->head == NULL) {
+        perror("error");
+        exit(EXIT_FAILURE);
+    }
+
+    // Setting Default Values for New Head
+    list->head->next = old_head;
+    list->head->val = val;
+
+    // Increment List Len
+    list->len++;
+}
+
 void append_node(LinkedList *list, void *val) {
     // Allocating Memory for New Node
     list->tail->next = malloc(sizeof(Node));
@@ -119,23 +154,31 @@ void append_node(LinkedList *list, void *val) {
     list->len++;
 }
 
-void insert_node_at_head(LinkedList *list, void *val) {
-    // Allocating Memory for New Node
-    Node *old_head = list->head;
-    list->head = malloc(sizeof(Node));
-
-    // Malloc Error Checks
-    if (list->head == NULL) {
-        perror("error");
-        exit(EXIT_FAILURE);
+void del_node_i(LinkedList *list, uint_fast32_t ind) {
+    // NOTE: doesn't free node->val
+    if (ind >= list->len) {
+        fprintf(stderr, "error: index out of bounds\t failed to delete node %d",
+                ind);
+        return;
     }
 
-    // Setting Default Values for New Head
-    list->head->next = old_head;
-    list->head->val = val;
+    if (ind == 0) {
+        Node *node = list->head;
+        list->head = node->next;
+        free(node);
+        list->len--;
+        return;
+    }
 
-    // Increment List Len
-    list->len++;
+    Node *node = list->head;
+    for (int i = 0; i < ind - 1; i++) {
+        node = node->next;
+    }
+    Node *old_node = node->next;
+    node->next = node->next->next;
+
+    free(old_node);
+    list->len--;
 }
 
 Node *get_node(LinkedList *list, size_t ind) {
